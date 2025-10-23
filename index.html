@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XNO-RY Store - Blind Box Toys</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f6f3;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+        }
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: #4CAF50;
+        }
+        .main-content {
+            margin-top: 120px;
+            padding: 40px 0;
+        }
+        .hero-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        .hero-text {
+            flex: 1;
+            padding-right: 60px;
+        }
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0 0 20px;
+            line-height: 1.2;
+        }
+        .hero-text p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .products-section {
+            padding: 40px 0;
+        }
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+        @media (max-width: 992px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        
+        .product-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .product-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 10px;
+            color: #333;
+        }
+        .price {
+            font-size: 24px;
+            color: #4CAF50;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        .stock-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .add-to-cart-controls {
+            display: grid;
+            grid-template-columns: 45px 60px 45px 1fr;
+            gap: 8px;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: auto;
+        }
+        .qty-btn {
+            background: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            width: 100%;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 0;
+        }
+        .qty-btn:hover {
+            background: #f0f0f0;
+        }
+        .add-to-cart-controls input {
+            width: 100%;
+            height: 36px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 0;
+            font-size: 14px;
+            font-weight: 500;
+            appearance: textfield;
+            -moz-appearance: textfield;
+            -webkit-appearance: textfield;
+        }
+        .add-to-cart-controls input::-webkit-outer-spin-button,
+        .add-to-cart-controls input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            height: 36px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s;
+            padding: 0 15px;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .cart-count {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            position: relative;
+            top: -10px;
+            right: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">XNO-RY</a>
+            <nav>
+                <a href="index.html">Shop</a>
+                <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+                <a href="backpack.html">Backpack</a>
+                <a href="inventory.html">Admin Panel</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="hero-section">
+                <div class="hero-text">
+                    <h1>มาสำรวจกล่องจุ่มกันเถอะ<br>กล่องจุ่ม Skull Panda Series ต่างๆ</h1>
+                    <p>Project นี้ทำมาเผื่อการศึกษาเท่านั้น นาย ทศพร ปราโมช 6708194</p>
+                </div>
+            </section>
+
+            <section class="products-section">
+                <h2 class="section-title">Available Products</h2>
+                <div id="products-list" class="products-grid">
+                    <p>Loading products...</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+    const CART_KEY = 'xno-ry-cart';
+        const API_ROOT = 'http://localhost:3000'; 
+
+        function getCart() { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); }
+        function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartCount(); }
+
+        function updateCartCount() {
+            try {
+            const cart = getCart();
+            const total = Object.values(cart).reduce((s,it)=>s + (it.qty||0), 0);
+            const el = document.getElementById('cart-count'); if(el) el.textContent = total;
+            } catch(e){ console.error('updateCartCount error', e); }
+        }
+
+        async function updateBackpackCount(){
+            try{
+            const res = await fetch(API_ROOT + '/api/backpack');
+            const j = await res.json();
+            const n = Array.isArray(j.data?.items) ? j.data.items.length : 0;
+            const el = document.getElementById('backpack-count'); if(el) el.textContent = n;
+            }catch(e){ console.error('updateBackpackCount error', e); }
+        }
+
+        function addToCartFromCard(id, name, price, img, qty) {
+            const cart = getCart();
+            if (cart[id]) cart[id].qty += qty;
+            else cart[id] = { id, name, price, img, qty };
+            saveCart(cart);
+            alert(name + ' added to cart');
+            updateBackpackCount(); 
+            updateCartCount();
+        }
+
+        async function loadProducts() {
+            const listElement = document.getElementById('products-list');
+            try {
+            const res = await fetch(API_ROOT + '/api/products');
+            const data = await res.json();
+
+            if (data.error) throw new Error(data.error);
+                
+                const products = data.data; 
+                if (products.length === 0) {
+                    listElement.innerHTML = '<p>No products found. Check your MongoDB seed data.</p>';
+                    return;
+                }
+                
+                listElement.innerHTML = ''; 
+
+                products.forEach(p => { 
+                    const stockCount = p.totalStock !== undefined ? p.totalStock : 0;
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <img src="${p.img}" alt="${p.name}">
+                        <h3>${p.name}</h3>
+                        <p class="price">฿${p.price.toFixed(2)}</p>
+                        <p class="stock-info">Available boxes: ${stockCount}</p>
+                        <div class="add-to-cart-controls">
+                        <button class="qty-btn minus-btn" data-id="${p.id}">-</button>
+                        <input type="number" value="1" min="1" max="${stockCount}" data-id="${p.id}">
+                        <button class="qty-btn plus-btn" data-id="${p.id}">+</button>
+                        <button class="add-to-cart-btn btn" 
+                        data-id="${p.id}" 
+                        data-name="${p.name}" 
+                         data-price="${p.price}"
+                        data-img="${p.img}">
+                        Add to Cart
+                        </button>
+                        </div>
+                    `;
+                    listElement.appendChild(card);
+                });
+                
+                wireUpControls(); 
+
+            } catch (err) {
+                console.error('Failed to load products:', err);
+                listElement.innerHTML = '<p style="color:red;">Error loading products. Check the browser console (F12) for details. **Is the Node.js server running and connected to MongoDB?**</p>';
+            }
+        }
+        
+        function wireUpControls() {
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn=>{
+                btn.addEventListener('click', (e)=>{
+                const id = btn.dataset.id;
+                const name = btn.dataset.name;
+                const price = parseFloat(btn.dataset.price) || 0;
+                const card = btn.closest('.product-card');
+                const img = card ? (card.querySelector('img')||{}).src : ''; 
+                const qtyInput = card ? card.querySelector('input[type="number"]') : null;
+                const qty = qtyInput ? Math.max(1, parseInt(qtyInput.value)||1) : 1;
+                addToCartFromCard(id, name, price, img, qty); 
+                });
+            });
+
+            document.querySelectorAll('.product-card').forEach(card=>{
+                const minus = card.querySelector('.minus-btn');
+                const plus = card.querySelector('.plus-btn');
+                const input = card.querySelector('input[type="number"]');
+                const maxStock = parseInt(input.getAttribute('max')) || 1;
+
+                if(minus && input){ 
+                    minus.addEventListener('click', ()=>{ 
+                        input.stepDown(); 
+                        if(input.value < 1) input.value = 1; 
+                    });
+                }
+                if(plus && input){ 
+                    plus.addEventListener('click', ()=>{ 
+                        input.stepUp(); 
+                        if(input.value > maxStock) input.value = maxStock;
+                    });
+                }
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', ()=>{
+            updateBackpackCount();
+            updateCartCount();
+            loadProducts();
+        });
+    </script>
+</body>
+</html>

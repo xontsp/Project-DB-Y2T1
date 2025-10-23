@@ -1,0 +1,4 @@
+เช็ค stock 
+exec mongod
+use blindbox_store
+db.products.find({}, { name: 1, stock: 1, _id: 0 }).pretty()

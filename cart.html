@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - XNO-RY Store</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        nav {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        nav a {
+            color: #333;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #4CAF50;
+        }
+        h1 {
+            margin: 0 0 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .cart-section { background: #fff; padding: 20px; margin-top: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
+        .item-details { display: flex; align-items: center; gap: 15px; }
+        .item-details img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+        .item-controls { display: flex; align-items: center; gap: 10px; }
+        .checkout-summary { 
+            margin-top: 20px; 
+            padding-top: 20px; 
+            border-top: 2px solid #eee; 
+            text-align: right; 
+        }
+        .checkout-summary button { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            font-weight: 500;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .checkout-summary button:hover {
+            background: #45a049;
+        }
+        .checkout-summary button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .remove-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .remove-btn:hover {
+            background: #ff1744;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-content h3 {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 24px;
+        }
+        .modal-content p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        #qr-area {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 24px 0;
+        }
+        #qr-area img {
+            border-radius: 8px;
+        }
+        .close-btn {
+            color: #666;
+            float: right;
+            font-size: 24px;
+            font-weight: normal;
+            cursor: pointer;
+            padding: 8px;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+        .close-btn:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+        .paid-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+        .paid-btn:hover {
+            background: #45a049;
+        }
+        .paid-btn:disabled {
+            background: #cccccc;
+            color: white;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Shop</a>
+            <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+            <a href="backpack.html">Backpack</a>
+            <a href="inventory.html">Admin Panel</a>
+        </nav>
+        
+        <h1>XNO-RY Store</h1>
+
+    <div class="container">
+        <div class="cart-section">
+            <h2>Your Cart</h2>
+            <div id="cart-contents">
+                </div>
+            <div class="checkout-summary">
+                <p>Total: ฿<span id="cart-total">0.00</span></p>
+                <button id="checkout-btn" disabled>Checkout & Pay</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h3>Scan QR to Pay</h3>
+            <p>Your total is ฿<strong id="modal-total">0.00</strong>.</p>
+            <div id="qr-area" style="text-align:center;margin:15px 0;">
+            </div>
+            <p>After scanning and paying with the QR, click the button below to confirm payment.</p>
+            <button id="paid-confirm" class="checkout-summary button paid-btn">I have paid</button>
+        </div>
+    </div>
+
+    <script>
+        const API_ROOT = 'http://localhost:3000';
+        const CART_KEY = 'xno-ry-cart';
+
+        function getCart() {
+            try {
+                return JSON.parse(localStorage.getItem(CART_KEY)) || {};
+            } catch (e) {
+                console.error("Error reading cart from localStorage", e);
+                return {};
+            }
+        }
+
+        function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+        updateCartCount();
+        }
+
+        function clearCart() {
+        localStorage.removeItem(CART_KEY);
+        }
+
+        function updateCartCount() {
+        const cart = getCart();
+        const totalItems = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+        document.getElementById('cart-count').textContent = totalItems;
+        }
+
+        function renderCart() {
+            const cart = getCart();
+            const contents = document.getElementById('cart-contents');
+            let total = 0;
+            contents.innerHTML = '';
+
+            const itemsArray = Object.values(cart);
+
+            if (itemsArray.length === 0) {
+                contents.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('checkout-btn').disabled = true;
+                document.getElementById('cart-total').textContent = '0.00';
+                return;
+            }
+
+            itemsArray.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div class="item-details">
+                        <img src="${item.img || 'img/placeholder.png'}" alt="${item.name}">
+                        <div>
+                            <h4>${item.name}</h4>
+                            <p>฿${item.price.toFixed(2)} x ${item.qty} = ฿${itemTotal.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <div class="item-controls">
+                        <button class="remove-btn" data-id="${item.id}">Remove</button>
+                    </div>
+                `;
+                contents.appendChild(div);
+            });
+
+            document.getElementById('cart-total').textContent = total.toFixed(2);
+            document.getElementById('modal-total').textContent = total.toFixed(2);
+            document.getElementById('checkout-btn').disabled = false;
+            
+            wireUpControls();
+        }
+
+        function wireUpControls() {
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    const cart = getCart();
+                    
+                    // ลบสินค้าออกจากตะกร้า
+                    if (cart[id]) {
+                        delete cart[id];
+                    }
+
+                    saveCart(cart);
+                    renderCart(); 
+                });
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', ()=>{
+            updateCartCount();
+            renderCart();
+
+            document.getElementById('checkout-btn').addEventListener('click', ()=>{
+                const cart = getCart();
+                if (Object.values(cart).length === 0) return alert('Your cart is empty');
+
+                const qrArea = document.getElementById('qr-area');
+                qrArea.innerHTML = `<img src="/S__22953998.jpg" alt="QR" style="max-width:220px;">`;
+                document.getElementById('modal-total').textContent = document.getElementById('cart-total').textContent;
+                document.getElementById('checkout-modal').style.display = 'flex';
+            });
+
+            document.getElementById('close-modal').addEventListener('click', ()=>{ 
+                document.getElementById('checkout-modal').style.display='none'; 
+            });
+
+            document.getElementById('paid-confirm').addEventListener('click', ()=> {
+                const cart = getCart();
+                const items = Object.values(cart);
+                const backpackItems = [];
+                const PRODUCTS = [
+                    { 
+                        id: 1, 
+                        name: "SKULLPANDA The Sound Series",
+                        items: [
+                            { id: 'SKP-001', name: 'DJ SKULLPANDA', type: 'secret' },
+                            { id: 'SKP-002', name: 'ROCKER SKULLPANDA', type: 'rare' },
+                            { id: 'SKP-003', name: 'SINGER SKULLPANDA', type: 'rare' },
+                            { id: 'SKP-004', name: 'DRUMMER SKULLPANDA', type: 'common' },
+                            { id: 'SKP-005', name: 'BASSIST SKULLPANDA', type: 'common' }
+                        ]
+                    },
+                    { 
+                        id: 2, 
+                        name: "SKULLPANDA You Found Me!! Series",
+                        items: [
+                            { id: 'YFM-001', name: 'GOLDEN ANGEL', type: 'secret' },
+                            { id: 'YFM-002', name: 'RED DEVIL', type: 'rare' },
+                            { id: 'YFM-003', name: 'BLUE SPIRIT', type: 'rare' },
+                            { id: 'YFM-004', name: 'GREEN FAIRY', type: 'common' },
+                            { id: 'YFM-005', name: 'PURPLE WITCH', type: 'common' }
+                        ]
+                    },
+                    { 
+                        id: 3, 
+                        name: "SKULLPANDA L'Impressionnisme Series",
+                        items: [
+                            { id: 'IMP-001', name: 'STARRY NIGHT PANDA', type: 'secret' },
+                            { id: 'IMP-002', name: 'WATER LILY PANDA', type: 'rare' },
+                            { id: 'IMP-003', name: 'SUNFLOWER PANDA', type: 'rare' },
+                            { id: 'IMP-004', name: 'CAFE NIGHT PANDA', type: 'common' },
+                            { id: 'IMP-005', name: 'WHEAT FIELD PANDA', type: 'common' }
+                        ]
+                    }
+                ];
+                
+                const PROBABILITIES = { secret: 10, rare: 30, common: 60 };
+                
+                items.forEach(item => {
+                    const product = PRODUCTS.find(p => p.id === parseInt(item.id));
+                    if (!product) return;
+                    
+                    for (let i = 0; i < item.qty; i++) {
+                        const rnd = Math.random() * 100;
+                        let chosenType = 'common';
+                        if (rnd <= PROBABILITIES.secret) chosenType = 'secret';
+                        else if (rnd <= PROBABILITIES.secret + PROBABILITIES.rare) chosenType = 'rare';
+                        const availableItems = product.items.filter(it => it.type === chosenType);
+                        const chosenItem = availableItems[Math.floor(Math.random() * availableItems.length)];
+                        
+                        backpackItems.push({
+                            id: Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                            productId: product.id,
+                            productName: product.name,
+                            itemId: chosenItem.id,
+                            itemName: chosenItem.name,
+                            rarity: chosenType,
+                            status: 'unopened',
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                });
+
+                const currentBackpack = JSON.parse(localStorage.getItem('backpack-items') || '[]');
+                localStorage.setItem('backpack-items', JSON.stringify([...currentBackpack, ...backpackItems]));
+                
+                clearCart();
+                alert('🎉 ชำระเงินสำเร็จ! กำลังไปที่กระเป๋าของคุณ');
+                document.getElementById('checkout-modal').style.display='none';
+                window.location.href = 'backpack.html';
+            });
+        });
+    </script>
+</body>
+</html>
